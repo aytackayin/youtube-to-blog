@@ -1,0 +1,49 @@
+{
+    "name": "aytackayin/youtube-to-blog",
+    "description": "YouTube to Blog Laravel package with Chrome Extension API integration for Filament",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "filament",
+        "youtube",
+        "blog",
+        "chrome-extension",
+        "api"
+    ],
+    "authors": [
+        {
+            "name": "Aytac Kayin"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0",
+        "filament/filament": "^4.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aytackayin\\YoutubeToBlog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aytackayin\\YoutubeToBlog\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aytackayin\\YoutubeToBlog\\YoutubeToBlogServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
