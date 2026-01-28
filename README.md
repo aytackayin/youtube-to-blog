@@ -1,31 +1,31 @@
 # YouTube to Blog Filament Package
 
-YouTube videolarını Chrome extension aracılığıyla blog yazısına dönüştüren, videoyu otomatik indirip galeriye ekleyen kapsamlı Laravel/Filament paketi.
+A comprehensive Laravel/Filament package that converts YouTube videos into blog posts via a Chrome extension, automatically downloading the video to the gallery.
 
-> **v1.0.0 Özellikleri:**
-> - Arka plan video indirme (Queue worker)
-> - Otomatik çalışan worker (Windows için özel tetikleyici)
-> - Chrome Eklentisi ile anlık durum takibi (Polling)
-> - "İnsansı" indirme yetenekleri (YouTube 403 bypass)
+> **v1.0.0 Features:**
+> - Background video downloading (Queue worker)
+> - Automatically running worker (Special trigger for Windows)
+> - Instant status tracking with Chrome Extension (Polling)
+> - "Human-like" downloading capabilities (YouTube 403 bypass)
 
-## Gereksinimler
+## Requirements
 
-- **Laravel 11+** veya **Laravel 12**
+- **Laravel 11+** or **Laravel 12**
 - **Filament 4.x**
-- **yt-dlp:** Sunucuda kurulu olmalıdır.
-- **PHP Queue Worker:** Arka plan işlemleri için gereklidir (Paket localde otomatik tetikler).
+- **yt-dlp:** Must be installed on the server.
+- **PHP Queue Worker:** Required for background processes (The package automatically triggers locally).
 
-## Kurulum
+## Installation
 
-### 1. Paketi Yükleyin
+### 1. Install the Package
 
-(Packagist'te yayınlandıktan sonra):
+(After publishing on Packagist):
 
 ```bash
 composer require aytackayin/youtube-to-blog
 ```
 
-Geliştirme aşamasında `composer.json` repositories ayarı ile:
+During development with `composer.json` repositories setting:
 
 ```json
 "repositories": [
@@ -36,71 +36,71 @@ Geliştirme aşamasında `composer.json` repositories ayarı ile:
 ]
 ```
 
-### 2. Migration'ları Çalıştırın
+### 2. Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 3. Config Dosyasını Publish Edin
+### 3. Publish Config File
 
 ```bash
 php artisan vendor:publish --tag=youtube-to-blog-config
 ```
 
-### 4. yt-dlp Kurulumu (Önemli!)
+### 4. yt-dlp Installation (Important!)
 
-Video indirme özelliğinin çalışması için sunucuda `yt-dlp` yüklü olmalıdır.
+`yt-dlp` must be installed on the server for the video download feature to work.
 
 **Windows:**
-1. `yt-dlp.exe` dosyasını indirin.
-2. Projenizde bir klasöre (örn: `extensions/youtube-to-blog/`) koyun.
-3. `.env` dosyasına yolunu ekleyin:
+1. Download `yt-dlp.exe`.
+2. Place it in a folder in your project (e.g., `extensions/youtube-to-blog/`).
+3. Add the path to your `.env` file:
 
 ```env
-YT_DLP_PATH="C:/laragon/www/proje/extensions/youtube-to-blog/yt-dlp.exe"
+YT_DLP_PATH="C:/laragon/www/project/extensions/youtube-to-blog/yt-dlp.exe"
 ```
 
 **Linux:**
-1. Terminalden yükleyin:
+1. Install via terminal:
    ```bash
    sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
    sudo chmod a+rx /usr/local/bin/yt-dlp
    ```
-2. `.env` ayarını yapın:
+2. Configure `.env`:
    ```env
    YT_DLP_PATH="/usr/local/bin/yt-dlp"
    ```
 
-### 5. Chrome Extension Kurulumu
+### 5. Chrome Extension Installation
 
-Bu paket beraberinde bir Chrome Eklentisi ile gelir.
+This package comes with a Chrome Extension.
 
-1. **Paketi İndirin:** Bu repository'deki `youtube-to-blog-extension.zip` dosyasını indirin.
-2. **Zip'i Açın:** Dosyaları bir klasöre çıkarın.
-3. **Chrome'a Yükleyin:**
-   - Chrome'da `chrome://extensions` adresine gidin.
-   - Sağ üstten **Developer mode**'u açın.
-   - **Load unpacked** butonuna basın ve çıkardığınız klasörü seçin.
-4. **Ayarları Yapın:**
-   - Eklenti ikonuna tıklayın.
-   - **Site URL:** `https://siteniz.com` (veya `http://localhost/proje`)
-   - **API Key:** Profil sayfanızdan oluşturduğunuz Chrome Token'ı girin.
+1. **Download the Package:** Download the `youtube-to-blog-extension.zip` file from this repository.
+2. **Unzip:** Extract the files to a folder.
+3. **Install on Chrome:**
+   - Go to `chrome://extensions` in Chrome.
+   - Enable **Developer mode** in the top right.
+   - Click **Load unpacked** and select the folder you extracted.
+4. **Configure:**
+   - Click the extension icon.
+   - **Site URL:** `https://your-site.com` (or `http://localhost/project`)
+   - **API Key:** Enter the Chrome Token generated from your profile page.
 
-## Kullanım
+## Usage
 
-1. **YouTube'a Gidin:** Herhangi bir videoyu açın.
-2. **"Blog Olarak Kaydet" Butonu:** Videonun altına eklenen butona veya eklenti ikonuna tıklayın.
-3. **Kategori Seçin:** Açılan popup'tan kategori seçin ve "Kaydet" deyin.
-4. **İşlem Takibi:**
-   - Eklenti önce "Kaydedildi" diyecektir.
-   - Video arka planda inmeye başlar (Sunucu yoğunluğuna göre değişir).
-   - Video inince Eklenti "Tamamlandı" bildirimi verir.
-   - Panelde de sistem bildirimi görünür.
+1. **Go to YouTube:** Open any video.
+2. **"Save as Blog" Button:** Click the button added below the video or the extension icon.
+3. **Select Category:** Select a category from the popup and click "Save".
+4. **Process Tracking:**
+   - The extension will first say "Saved".
+   - The video starts downloading in the background (Depends on server load).
+   - When the video is downloaded, the Extension gives a "Completed" notification.
+   - A system notification also appears in the Panel.
 
-## Model Ayarları
+## Model Settings
 
-`App\Models\User` modeline trait'i ekleyin:
+Add the trait to `App\Models\User` model:
 
 ```php
 use Aytackayin\YoutubeToBlog\Traits\HasYouTubeApiToken;
@@ -111,7 +111,7 @@ class User extends Authenticatable
 }
 ```
 
-Filament profil sayfanıza API key yönetim bileşenini ekleyin:
+Add the API key management component to your Filament profile page:
 
 ```php
 use Aytackayin\YoutubeToBlog\Filament\Components\YouTubeApiKeyComponent;
@@ -119,19 +119,19 @@ use Aytackayin\YoutubeToBlog\Filament\Components\YouTubeApiKeyComponent;
 YouTubeApiKeyComponent::getTab(),
 ```
 
-## Yapılandırma
+## Configuration
 
-`config/youtube-to-blog.php` üzerinden kullanılan Model sınıflarını ve dosya yolu ayarlarını değiştirebilirsiniz.
+You can change the Model classes and file path settings via `config/youtube-to-blog.php`.
 
 ```php
 return [
-    'disk' => 'attachments', // Dosyaların yükleneceği disk
+    'disk' => 'attachments', // Disk where files will be uploaded
     'video_download_enabled' => true,
     'yt_dlp_path' => env('YT_DLP_PATH'),
     // ...
 ];
 ```
 
-## Lisans
+## License
 
 MIT License
