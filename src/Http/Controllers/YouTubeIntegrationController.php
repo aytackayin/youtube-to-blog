@@ -196,11 +196,11 @@ class YouTubeIntegrationController extends Controller
         try {
             $videoId = $validated['video_id'];
             $thumbUrl = "https://i.ytimg.com/vi/{$videoId}/maxresdefault.jpg";
-            $imageResponse = Http::get($thumbUrl);
+            $imageResponse = Http::withoutVerifying()->get($thumbUrl);
 
             if (!$imageResponse->successful()) {
                 $thumbUrl = "https://i.ytimg.com/vi/{$videoId}/hqdefault.jpg";
-                $imageResponse = Http::get($thumbUrl);
+                $imageResponse = Http::withoutVerifying()->get($thumbUrl);
             }
 
             if ($imageResponse->successful()) {
@@ -227,6 +227,7 @@ class YouTubeIntegrationController extends Controller
             }
         } catch (Exception $e) {
             // Silent fail for thumbnail fetching
+            \Illuminate\Support\Facades\Log::error("Controller Image Download Failed: " . $e->getMessage());
         }
 
         // Finalize initial attachments (Cover Image)
@@ -253,11 +254,18 @@ class YouTubeIntegrationController extends Controller
             }
         }
 
-        return response()->json([
-            'message' => 'Blog taslağı oluşturuldu. Video indirme işlemi başlatıldı (Oto-Worker).',
-            'blog_id' => $blog->id,
+        $responseData = [
+            'message' => 'Blog taslağı oluşturuldu.',
             'url' => url("/admin/blogs/{$blog->id}/edit"),
-        ], 201);
+        ];
+
+        if ($request->boolean('add_to_attachments')) {
+            $responseData['message'] .= ' Video indirme işlemi başlatıldı (Oto-Worker).';
+            // Returning blog_id triggers polling in the Chrome Extension v1.0.0
+            $responseData['blog_id'] = $blog->id;
+        }
+
+        return response()->json($responseData, 201);
     }
 
 
